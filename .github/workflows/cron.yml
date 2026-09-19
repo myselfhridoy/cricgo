@@ -1,0 +1,28 @@
+name: CricGo Scraper
+
+on:
+  schedule:
+    # every 15 minutes
+    - cron: '*/15 * * * *'
+  workflow_dispatch:  # manual run button
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deps
+        run: cd scraper && npm install
+
+      - name: Run scraper
+        env:
+          UPDATE_URL: ${{ secrets.UPDATE_URL }}
+          UPDATE_KEY: ${{ secrets.UPDATE_KEY }}
+        run: cd scraper && node scrape.js
